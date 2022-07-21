@@ -30,14 +30,16 @@ export const HomeScreen = () => {
     }
   };
 
-  const fetchMoreImages = async () => {
+  const fetchMoreImages = async (nextPageNumber: number) => {
     setLoading(false);
     try {
       const res = await fetch(
-        `https://picsum.photos/v2/list?page=${pageNumber}&limit=30`
+        `https://picsum.photos/v2/list?page=${nextPageNumber}&limit=30`
       );
       const data = await res.json();
-      setPhotos(data);
+      setPhotos((prevState) => {
+        return [...prevState, ...data];
+      });
       setLoading(false);
     } catch (err) {
       console.log(err);
@@ -59,8 +61,9 @@ export const HomeScreen = () => {
             <Image source={{ uri: item.download_url }} style={styles.image} />
           )}
           onEndReached={() => {
-            setPageNumber(pageNumber + 1);
-            fetchMoreImages();
+            const nextPageNumber = pageNumber + 1;
+            setPageNumber(nextPageNumber);
+            fetchMoreImages(nextPageNumber);
           }}
         />
         {loading && <Text category="h5">Loading...</Text>}
