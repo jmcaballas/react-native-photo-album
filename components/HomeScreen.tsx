@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
-import { Image, FlatList } from "react-native";
+import { Image, FlatList, TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { Layout, StyleService, Text } from "@ui-kitten/components";
+
+type Nav = {
+  navigate: (value: string, item: any) => void;
+};
 
 interface Photos {
   id: string;
@@ -12,6 +17,7 @@ interface Photos {
 }
 
 export const HomeScreen = () => {
+  const navigation = useNavigation<Nav>();
   const [photos, setPhotos] = useState<Photos[]>([]);
   const [loading, setLoading] = useState(false);
   const [pageNumber, setPageNumber] = useState<number>(1);
@@ -58,7 +64,11 @@ export const HomeScreen = () => {
           keyExtractor={(item) => item.id.toString()}
           numColumns={3}
           renderItem={({ item }) => (
-            <Image source={{ uri: item.download_url }} style={styles.image} />
+            <TouchableOpacity
+              onPress={() => navigation.navigate("Photo Detail", { item })}
+            >
+              <Image source={{ uri: item.download_url }} style={styles.image} />
+            </TouchableOpacity>
           )}
           onEndReached={() => {
             const nextPageNumber = pageNumber + 1;
