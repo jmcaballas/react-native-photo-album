@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Image, FlatList, StyleSheet } from "react-native";
-import { Layout, Text } from "@ui-kitten/components";
+import { Button, Layout, Text } from "@ui-kitten/components";
 
 interface Photos {
   id: string;
@@ -14,11 +14,25 @@ interface Photos {
 export const HomeScreen = () => {
   const [photos, setPhotos] = useState<Photos[]>([]);
   const [loading, setLoading] = useState(false);
-  const pageNumber = 1;
+  const [pageNumber, setPageNumber] = useState<number>(1);
 
-  const fetchImages = async () => {
+  const fetchInitialImages = async () => {
+    setLoading(false);
     try {
-      setLoading(true);
+      const res = await fetch(
+        `https://picsum.photos/v2/list?page=${pageNumber}&limit=30`
+      );
+      const data = await res.json();
+      setPhotos(data);
+      setLoading(false);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const fetchMoreImages = async () => {
+    setLoading(false);
+    try {
       const res = await fetch(
         `https://picsum.photos/v2/list?page=${pageNumber}&limit=30`
       );
@@ -31,24 +45,25 @@ export const HomeScreen = () => {
   };
 
   useEffect(() => {
-    fetchImages();
+    fetchInitialImages();
   }, []);
 
   return (
     <Layout style={styles.container}>
       <Layout style={styles.albumContainer}>
-        {loading ? (
-          <Text category="h5">Loading...</Text>
-        ) : (
-          <FlatList
-            data={photos}
-            keyExtractor={(item) => item.id.toString()}
-            numColumns={3}
-            renderItem={({ item }) => (
-              <Image source={{ uri: item.download_url }} style={styles.image} />
-            )}
-          />
-        )}
+        <FlatList
+          data={photos}
+          keyExtractor={(item) => item.id.toString()}
+          numColumns={3}
+          renderItem={({ item }) => (
+            <Image source={{ uri: item.download_url }} style={styles.image} />
+          )}
+          onEndReached={() => {
+            setPageNumber(pageNumber + 1);
+            fetchMoreImages();
+          }}
+        />
+        {loading && <Text category="h5">Loading...</Text>}
       </Layout>
     </Layout>
   );
