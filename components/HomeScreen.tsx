@@ -18,7 +18,7 @@ export const HomeScreen = () => {
   const fetchImages = async () => {
     try {
       const res = await fetch(
-        `https://picsum.photos/v2/list?page=${pageNumber}&limit=18`
+        `https://picsum.photos/v2/list?page=${pageNumber}&limit=30`
       );
       const data = await res.json();
       setPhotos(data);
@@ -35,15 +35,16 @@ export const HomeScreen = () => {
 
   return (
     <Layout style={styles.container}>
-      <Text>Photo Album</Text>
-      <FlatList
-        data={photos}
-        keyExtractor={(item) => item.id.toString()}
-        numColumns={3}
-        renderItem={({ item }) => (
-          <Image source={{ uri: item.download_url }} style={styles.image} />
-        )}
-      />
+      <Layout style={styles.albumContainer}>
+        <FlatList
+          data={photos}
+          keyExtractor={(item) => item.id.toString()}
+          numColumns={3}
+          renderItem={({ item }) => (
+            <Image source={{ uri: item.download_url }} style={styles.image} />
+          )}
+        />
+      </Layout>
     </Layout>
   );
 };
@@ -54,8 +55,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
+  albumContainer: {
+    marginVertical: 10,
+  },
   image: {
     height: 100,
     width: 100,
+    margin: 5,
   },
 });
