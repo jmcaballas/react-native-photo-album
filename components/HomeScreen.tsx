@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { Image, FlatList, StyleSheet } from "react-native";
-import { Layout, Text } from "@ui-kitten/components";
+import { Image, FlatList } from "react-native";
+import { Layout, StyleService, Text } from "@ui-kitten/components";
 
 interface Photos {
   id: string;
@@ -72,7 +72,7 @@ export const HomeScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleService.create({
   container: {
     flex: 1,
     alignItems: "center",
