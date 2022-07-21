@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Image, FlatList, StyleSheet } from "react-native";
-import { Button, Layout, Text } from "@ui-kitten/components";
+import { Layout, Text } from "@ui-kitten/components";
 
 interface Photos {
   id: string;
@@ -16,8 +16,8 @@ export const HomeScreen = () => {
   const [loading, setLoading] = useState(false);
   const [pageNumber, setPageNumber] = useState<number>(1);
 
-  const fetchInitialImages = async () => {
-    setLoading(false);
+  const fetchInitialPhotos = useCallback(async () => {
+    setLoading(true);
     try {
       const res = await fetch(
         `https://picsum.photos/v2/list?page=${pageNumber}&limit=30`
@@ -28,10 +28,10 @@ export const HomeScreen = () => {
     } catch (err) {
       console.log(err);
     }
-  };
+  }, []);
 
-  const fetchMoreImages = async (nextPageNumber: number) => {
-    setLoading(false);
+  const fetchMorePhotos = useCallback(async (nextPageNumber: number) => {
+    setLoading(true);
     try {
       const res = await fetch(
         `https://picsum.photos/v2/list?page=${nextPageNumber}&limit=30`
@@ -44,10 +44,10 @@ export const HomeScreen = () => {
     } catch (err) {
       console.log(err);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchInitialImages();
+    fetchInitialPhotos();
   }, []);
 
   return (
@@ -63,7 +63,7 @@ export const HomeScreen = () => {
           onEndReached={() => {
             const nextPageNumber = pageNumber + 1;
             setPageNumber(nextPageNumber);
-            fetchMoreImages(nextPageNumber);
+            fetchMorePhotos(nextPageNumber);
           }}
         />
         {loading && <Text category="h5">Loading...</Text>}
