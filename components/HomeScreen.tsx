@@ -1,7 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { Image, FlatList, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Layout, StyleService, Text } from "@ui-kitten/components";
+import { StatusBar } from "expo-status-bar";
+
+import { ThemeContext } from "../context/ThemeContext";
 
 type Nav = {
   navigate: (value: string, item: any) => void;
@@ -21,6 +24,7 @@ export const HomeScreen = () => {
   const [photos, setPhotos] = useState<Photos[]>([]);
   const [loading, setLoading] = useState(false);
   const [pageNumber, setPageNumber] = useState<number>(1);
+  const themeContext = useContext(ThemeContext);
 
   const fetchInitialPhotos = useCallback(async () => {
     setLoading(true);
@@ -78,6 +82,11 @@ export const HomeScreen = () => {
         />
         {loading && <Text category="h5">Loading...</Text>}
       </Layout>
+      {themeContext.theme === "dark" ? (
+        <StatusBar style="light" />
+      ) : (
+        <StatusBar style="dark" />
+      )}
     </Layout>
   );
 };

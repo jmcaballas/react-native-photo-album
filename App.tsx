@@ -33,14 +33,36 @@ export default function App() {
                   <MaterialIcons
                     name="settings"
                     size={24}
-                    color="black"
+                    color={theme === "dark" ? "#FFFFFF" : "#222B45"}
                     onPress={() => navigation.navigate("Settings")}
                   />
                 ),
+                headerStyle: {
+                  backgroundColor: theme === "light" ? "#FFFFFF" : "#222B45",
+                },
+                headerTintColor: theme === "light" ? "#222B45" : "#FFFFFF",
               })}
             />
-            <Stack.Screen name="Photo Detail" component={PhotoDetailScreen} />
-            <Stack.Screen name="Settings" component={SettingsScreen} />
+            <Stack.Screen
+              name="Photo Detail"
+              component={PhotoDetailScreen}
+              options={{
+                headerStyle: {
+                  backgroundColor: theme === "light" ? "#FFFFFF" : "#222B45",
+                },
+                headerTintColor: theme === "light" ? "#222B45" : "#FFFFFF",
+              }}
+            />
+            <Stack.Screen
+              name="Settings"
+              component={SettingsScreen}
+              options={{
+                headerStyle: {
+                  backgroundColor: theme === "light" ? "#FFFFFF" : "#222B45",
+                },
+                headerTintColor: theme === "light" ? "#222B45" : "#FFFFFF",
+              }}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       </ApplicationProvider>
