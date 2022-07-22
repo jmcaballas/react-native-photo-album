@@ -16,7 +16,10 @@ export const SettingsScreen = () => {
   return (
     <Layout style={styles.container}>
       <Layout style={styles.toggleContainer}>
-        <Toggle checked={checked} onChange={onCheckedChange}>
+        <Toggle
+          checked={themeContext.theme === "dark"}
+          onChange={onCheckedChange}
+        >
           {`Dark Mode: ${checked}`}
         </Toggle>
       </Layout>
