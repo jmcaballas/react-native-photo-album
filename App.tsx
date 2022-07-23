@@ -1,18 +1,19 @@
 import { useState } from "react";
+import { observer } from "mobx-react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ApplicationProvider } from "@ui-kitten/components";
 import * as eva from "@eva-design/eva";
 import { MaterialIcons } from "@expo/vector-icons";
 
-import { HomeScreen } from "./components/HomeScreen";
+import HomeScreen from "./components/HomeScreen";
 import { PhotoDetailScreen } from "./components/PhotoDetailScreen";
 import { SettingsScreen } from "./components/SettingsScreen";
 import { ThemeContext } from "./context/ThemeContext";
 
 const Stack = createNativeStackNavigator();
 
-export default function App() {
+function App() {
   const [theme, setTheme] = useState("light");
 
   const toggleTheme = () => {
@@ -69,3 +70,5 @@ export default function App() {
     </ThemeContext.Provider>
   );
 }
+
+export default observer(App);

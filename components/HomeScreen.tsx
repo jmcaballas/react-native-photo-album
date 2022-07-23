@@ -1,10 +1,12 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { Image, FlatList, TouchableOpacity } from "react-native";
+import { observer } from "mobx-react";
 import { useNavigation } from "@react-navigation/native";
-import { Layout, StyleService, Text } from "@ui-kitten/components";
+import { Button, Layout, StyleService, Text } from "@ui-kitten/components";
 import { StatusBar } from "expo-status-bar";
 
 import { ThemeContext } from "../context/ThemeContext";
+import appContext from "../store/Store";
 
 type Nav = {
   navigate: (value: string, item: any) => void;
@@ -19,52 +21,20 @@ interface Photos {
   download_url: string;
 }
 
-export const HomeScreen = () => {
+const HomeScreen = () => {
   const navigation = useNavigation<Nav>();
-  const [photos, setPhotos] = useState<Photos[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [pageNumber, setPageNumber] = useState<number>(1);
+  const appStore = useContext(appContext);
   const themeContext = useContext(ThemeContext);
 
-  const fetchInitialPhotos = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch(
-        `https://picsum.photos/v2/list?page=${pageNumber}&limit=30`
-      );
-      const data = await res.json();
-      setPhotos(data);
-      setLoading(false);
-    } catch (err) {
-      console.log(err);
-    }
-  }, []);
-
-  const fetchMorePhotos = useCallback(async (nextPageNumber: number) => {
-    setLoading(true);
-    try {
-      const res = await fetch(
-        `https://picsum.photos/v2/list?page=${nextPageNumber}&limit=30`
-      );
-      const data = await res.json();
-      setPhotos((prevState) => {
-        return [...prevState, ...data];
-      });
-      setLoading(false);
-    } catch (err) {
-      console.log(err);
-    }
-  }, []);
-
   useEffect(() => {
-    fetchInitialPhotos();
-  }, []);
+    appStore.fetchPhotos();
+  }, [appStore]);
 
   return (
     <Layout style={styles.container}>
       <Layout style={styles.albumContainer}>
         <FlatList
-          data={photos}
+          data={appStore.photos}
           keyExtractor={(item) => item.id.toString()}
           numColumns={3}
           renderItem={({ item }) => (
@@ -75,12 +45,10 @@ export const HomeScreen = () => {
             </TouchableOpacity>
           )}
           onEndReached={() => {
-            const nextPageNumber = pageNumber + 1;
-            setPageNumber(nextPageNumber);
-            fetchMorePhotos(nextPageNumber);
+            appStore.fetchPhotos();
           }}
         />
-        {loading && <Text category="h5">Loading...</Text>}
+        {appStore.loading && <Text category="h5">Loading...</Text>}
       </Layout>
       {themeContext.theme === "dark" ? (
         <StatusBar style="light" />
@@ -108,3 +76,5 @@ const styles = StyleService.create({
     margin: 5,
   },
 });
+
+export default observer(HomeScreen);
