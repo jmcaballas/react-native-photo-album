@@ -2,7 +2,7 @@ import { useContext, useEffect } from "react";
 import { Image, FlatList, TouchableOpacity } from "react-native";
 import { observer } from "mobx-react";
 import { useNavigation } from "@react-navigation/native";
-import { Button, Layout, StyleService, Text } from "@ui-kitten/components";
+import { Layout, StyleService, Text } from "@ui-kitten/components";
 import { StatusBar } from "expo-status-bar";
 
 import { ThemeContext } from "../context/ThemeContext";
@@ -27,7 +27,7 @@ const HomeScreen = () => {
   const themeContext = useContext(ThemeContext);
 
   useEffect(() => {
-    appStore.fetchPhotos();
+    appStore.loadInitialPhotos();
   }, [appStore]);
 
   return (
@@ -45,7 +45,7 @@ const HomeScreen = () => {
             </TouchableOpacity>
           )}
           onEndReached={() => {
-            appStore.fetchPhotos();
+            appStore.loadMorePhotos();
           }}
         />
         {appStore.loading && <Text category="h5">Loading...</Text>}

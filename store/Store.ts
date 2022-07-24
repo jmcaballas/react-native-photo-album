@@ -8,6 +8,7 @@ import {
   tProp,
   types,
 } from "mobx-keystone";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface IPhotos {
   id: string;
@@ -24,6 +25,32 @@ class AlbumModel extends Model({
   loading: tProp(types.boolean),
   pageNumber: tProp(types.number),
 }) {
+  @modelAction
+  loadInitialPhotos = async () => {
+    const savedPhotos = await AsyncStorage.getItem("savedPhotos");
+
+    if (savedPhotos === null) {
+      this.fetchPhotos();
+    } else {
+      this.updatePhotos(JSON.parse(savedPhotos));
+    }
+  };
+
+  @modelAction
+  loadMorePhotos = () => {
+    const savedPageNumber = AsyncStorage.getItem("savedPageNumber");
+
+    if (savedPageNumber === null) {
+      this.pageNumber = 1;
+      this.fetchPhotos();
+    } else {
+      console.log(savedPageNumber);
+      // this.pageNumber = Number(savedPageNumber);
+      this.pageNumber++;
+      this.fetchPhotos();
+    }
+  };
+
   @modelAction
   fetchPhotos = async () => {
     this.loading = true;
@@ -43,7 +70,8 @@ class AlbumModel extends Model({
   updatePhotos = (newPhotos: Array<IPhotos>) => {
     newPhotos = newPhotos.filter((photo) => this.photos.indexOf(photo) < 0);
     this.photos = this.photos.concat(newPhotos);
-    this.pageNumber++;
+    AsyncStorage.setItem("savedPhotos", JSON.stringify(this.photos));
+    AsyncStorage.setItem("savedPageNumber", JSON.stringify(this.pageNumber));
     this.loading = false;
   };
 }
